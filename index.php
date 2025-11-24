@@ -92,6 +92,44 @@ arsort($averageRanking);
 
 $overallAverage = array_sum($totals) / (count($inventory) * count($quarterLabels));
 
+/**
+ * Render a table of equipment whose quarterly inventory is all at or above the threshold.
+ */
+function renderAboveThresholdTable(array $inventory, int $threshold = 100): string
+{
+    $rows = [];
+    foreach ($inventory as $item => $data) {
+        $allAbove = count(array_filter($data, fn($qty) => $qty >= $threshold)) === count($data);
+        if (!$allAbove) {
+            continue;
+        }
+        $cells = '<td>' . htmlspecialchars($item) . '</td>';
+        foreach ($data as $qty) {
+            $cells .= '<td>' . (int) $qty . '</td>';
+        }
+        $rows[] = "<tr>{$cells}</tr>";
+    }
+
+    if (empty($rows)) {
+        return '<p>No equipment meets the threshold.</p>';
+    }
+
+    return '
+        <table>
+            <thead>
+                <tr>
+                    <th>Equipment</th>
+                    <th>Q1</th>
+                    <th>Q2</th>
+                    <th>Q3</th>
+                    <th>Q4</th>
+                </tr>
+            </thead>
+            <tbody>' . implode('', $rows) . '</tbody>
+        </table>
+    ';
+}
+
 header('Content-Type: text/html; charset=utf-8');
 ?>
 <!DOCTYPE html>
@@ -156,6 +194,11 @@ header('Content-Type: text/html; charset=utf-8');
                 <li><?= htmlspecialchars($item) ?> — <?= number_format($avg, 2) ?></li>
             <?php endforeach; ?>
         </ol>
+    </div>
+
+    <div class="ranking">
+        <strong>Equipment with all quarterly inventory ≥ 100:</strong>
+        <?= renderAboveThresholdTable($sortedInventory, 100); ?>
     </div>
 </body>
 </html>
