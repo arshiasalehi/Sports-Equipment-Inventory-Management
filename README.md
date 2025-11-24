@@ -50,8 +50,8 @@ Built using **PHP**, **MySQL**, and **HTML**, the system delivers fast, reliable
 
 ## 🎨 Presentation Layer
 - `index.php`
-- Dynamic HTML table
-- Inline styling and color logic
+- Dynamic HTML table styled with Tailwind via CDN
+- Responsive analytics cards, pill badges, and gradient background
 
 ## ⚙️ Business Logic
 - Quarterly totals calculation  
@@ -80,15 +80,37 @@ Built using **PHP**, **MySQL**, and **HTML**, the system delivers fast, reliable
    $pass = '';
    ```
 
-3. **Run Local PHP Server**
+3. **Tailwind (CDN)**
+   - The UI uses Tailwind via CDN in `index.php`:
+     ```html
+     <script src="https://cdn.tailwindcss.com"></script>
+     <script>
+       tailwind.config = {
+         theme: {
+           extend: {
+             colors: {
+               dusk: '#0f172a',
+               sky: '#38bdf8',
+               sun: '#f97316',
+               mint: '#22c55e',
+               sand: '#f8fafc'
+             }
+           }
+         }
+       };
+     </script>
+     ```
+   - No build step is required; reload the page to see style updates.
+
+4. **Run Local PHP Server**
    ```bash
    php -S localhost:8000
    ```
 
-4. Open in browser:  
+5. Open in browser:  
    👉 http://localhost:8000  
 
-5. (Optional) Use VS Code SQLTools to explore/edit the database.
+6. (Optional) Use VS Code SQLTools to explore/edit the database.
 
 ---
 

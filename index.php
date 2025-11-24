@@ -103,29 +103,29 @@ function renderAboveThresholdTable(array $inventory, int $threshold = 100): stri
         if (!$allAbove) {
             continue;
         }
-        $cells = '<td>' . htmlspecialchars($item) . '</td>';
+        $cells = '<td class="py-3 px-4 font-semibold text-white">' . htmlspecialchars($item) . '</td>';
         foreach ($data as $qty) {
-            $cells .= '<td>' . (int) $qty . '</td>';
+            $cells .= '<td class="py-3 px-4 text-center text-slate-200">' . (int) $qty . '</td>';
         }
-        $rows[] = "<tr>{$cells}</tr>";
+        $rows[] = '<tr class="hover:bg-white/5 transition">' . $cells . '</tr>';
     }
 
     if (empty($rows)) {
-        return '<p>No equipment meets the threshold.</p>';
+        return '<p class="text-slate-400">No equipment meets the threshold.</p>';
     }
 
     return '
-        <table>
-            <thead>
+        <table class="min-w-full text-sm text-left text-slate-200 border border-white/10 rounded-2xl overflow-hidden">
+            <thead class="text-xs uppercase tracking-wide text-slate-400 bg-white/5">
                 <tr>
-                    <th>Equipment</th>
-                    <th>Q1</th>
-                    <th>Q2</th>
-                    <th>Q3</th>
-                    <th>Q4</th>
+                    <th class="py-3 px-4">Equipment</th>
+                    <th class="py-3 px-4 text-center">Q1</th>
+                    <th class="py-3 px-4 text-center">Q2</th>
+                    <th class="py-3 px-4 text-center">Q3</th>
+                    <th class="py-3 px-4 text-center">Q4</th>
                 </tr>
             </thead>
-            <tbody>' . implode('', $rows) . '</tbody>
+            <tbody class="divide-y divide-white/10 bg-white/5">' . implode('', $rows) . '</tbody>
         </table>
     ';
 }
@@ -137,68 +137,137 @@ header('Content-Type: text/html; charset=utf-8');
 <head>
     <meta charset="UTF-8">
     <title>Sport Inventory Analytics</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        h1 { margin-bottom: 0.2em; }
-        table { border-collapse: collapse; width: 100%; margin-top: 1em; }
-        th, td { border: 1px solid #ccc; padding: 8px 10px; text-align: center; }
-        th { background: #f3f3f3; }
-        .avg-high { background: #e6f6e6; color: #0a7a0a; }
-        .avg-low { background: #fff2e0; color: #c76b00; }
-        .summary { margin-top: 0.5em; }
-        .ranking { margin-top: 1em; }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dusk: '#0f172a',
+                        sky: '#38bdf8',
+                        sun: '#f97316',
+                        mint: '#22c55e',
+                        sand: '#f8fafc'
+                    }
+                }
+            }
+        };
+    </script>
 </head>
-<body>
-    <h1>Sport Inventory Analytics</h1>
+<body class="min-h-screen bg-gradient-to-br from-dusk via-slate-900 to-black text-sand">
+    <div class="max-w-6xl mx-auto px-6 py-10">
+        <header class="flex items-center justify-between gap-3 flex-wrap">
+            <div>
+                <p class="text-sky font-semibold uppercase tracking-[0.2em] text-sm">Sports Equipment</p>
+                <h1 class="text-4xl sm:text-5xl font-bold text-white mt-2">Inventory Analytics</h1>
+                <p class="text-slate-300 mt-2">Monitor quarterly supply health with real-time insights.</p>
+            </div>
+            <div class="flex items-center gap-2 bg-white/5 border border-white/10 text-sky rounded-full px-4 py-2 shadow-lg shadow-sky/10 backdrop-blur">
+                <span class="text-lg">📊</span>
+                <span class="text-sm font-semibold">Live Snapshot</span>
+            </div>
+        </header>
 
-    <div class="summary">
-        <div><strong>Highest total quarter:</strong> <?= htmlspecialchars($highestQuarterLabel) ?> </div>
-        <div><strong>Lowest total quarter:</strong> <?= htmlspecialchars($lowestQuarterLabel) ?> </div>
-        <div><strong>Overall average inventory:</strong> <?= number_format($overallAverage, 2) ?></div>
-    </div>
+        <section class="grid md:grid-cols-3 gap-4 mt-8">
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-5 shadow-lg shadow-sky/10">
+                <p class="text-slate-400 text-sm">Highest Quarter</p>
+                <p class="text-2xl font-semibold text-white mt-1"><?= htmlspecialchars($highestQuarterLabel) ?></p>
+                <div class="mt-3 h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div class="h-full bg-sky w-10/12"></div>
+                </div>
+            </div>
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-5 shadow-lg shadow-sky/10">
+                <p class="text-slate-400 text-sm">Lowest Quarter</p>
+                <p class="text-2xl font-semibold text-white mt-1"><?= htmlspecialchars($lowestQuarterLabel) ?></p>
+                <div class="mt-3 h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div class="h-full bg-sun w-5/12"></div>
+                </div>
+            </div>
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-5 shadow-lg shadow-sky/10">
+                <p class="text-slate-400 text-sm">Overall Average</p>
+                <p class="text-2xl font-semibold text-white mt-1"><?= number_format($overallAverage, 2) ?></p>
+                <div class="mt-3 h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div class="h-full bg-mint w-8/12"></div>
+                </div>
+            </div>
+        </section>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Equipment</th>
-                <th>Q1</th>
-                <th>Q2</th>
-                <th>Q3</th>
-                <th>Q4</th>
-                <th>Average</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($sortedInventory as $item => $data): ?>
-                <?php
-                    $avg = $averages[$item];
-                    $avgClass = $avg >= 150 ? 'avg-high' : 'avg-low';
-                ?>
-                <tr class="<?= $avgClass ?>">
-                    <td><?= htmlspecialchars($item) ?></td>
-                    <td><?= $data[0] ?></td>
-                    <td><?= $data[1] ?></td>
-                    <td><?= $data[2] ?></td>
-                    <td><?= $data[3] ?></td>
-                    <td><?= number_format($avg, 2) ?></td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+        <section class="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 mt-8 shadow-xl shadow-sky/10 backdrop-blur">
+            <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
+                <div>
+                    <p class="text-slate-400 text-sm">Quarterly Snapshot</p>
+                    <h2 class="text-2xl font-semibold text-white">Equipment Overview</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-sky/20 text-sky border border-sky/30">Auto-sorted A → Z</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm text-left text-slate-200">
+                    <thead class="text-xs uppercase tracking-wide text-slate-400 border-b border-white/10">
+                        <tr>
+                            <th class="py-3 pr-4">Equipment</th>
+                            <th class="py-3 px-4 text-center">Q1</th>
+                            <th class="py-3 px-4 text-center">Q2</th>
+                            <th class="py-3 px-4 text-center">Q3</th>
+                            <th class="py-3 px-4 text-center">Q4</th>
+                            <th class="py-3 pl-4 text-center">Average</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                        <?php foreach ($sortedInventory as $item => $data): ?>
+                            <?php
+                                $avg = $averages[$item];
+                                $avgClass = $avg >= 150 ? 'bg-mint/10 text-mint border-mint/30' : 'bg-sun/10 text-sun border-sun/30';
+                            ?>
+                            <tr class="hover:bg-white/5 transition">
+                                <td class="py-3 pr-4 font-semibold text-white"><?= htmlspecialchars($item) ?></td>
+                                <td class="py-3 px-4 text-center"><?= $data[0] ?></td>
+                                <td class="py-3 px-4 text-center"><?= $data[1] ?></td>
+                                <td class="py-3 px-4 text-center"><?= $data[2] ?></td>
+                                <td class="py-3 px-4 text-center"><?= $data[3] ?></td>
+                                <td class="py-3 pl-4 text-center">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full border text-xs font-semibold <?= $avgClass ?>">
+                                        <?= number_format($avg, 2) ?>
+                                    </span>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-    <div class="ranking">
-        <strong>Average inventory ranking (desc):</strong>
-        <ol>
-            <?php foreach ($averageRanking as $item => $avg): ?>
-                <li><?= htmlspecialchars($item) ?> — <?= number_format($avg, 2) ?></li>
-            <?php endforeach; ?>
-        </ol>
-    </div>
+        <section class="grid lg:grid-cols-2 gap-6 mt-8">
+            <div class="bg-white/5 border border-white/10 rounded-3xl p-6 shadow-xl shadow-sky/10">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <p class="text-slate-400 text-sm">Leaders</p>
+                        <h3 class="text-xl font-semibold text-white">Average Inventory Ranking</h3>
+                    </div>
+                    <span class="text-xs px-3 py-1 rounded-full bg-white/10 text-slate-200 border border-white/10">High → Low</span>
+                </div>
+                <ol class="space-y-2 text-slate-100 list-decimal list-inside">
+                    <?php foreach ($averageRanking as $item => $avg): ?>
+                        <li class="flex items-center justify-between bg-white/5 px-3 py-2 rounded-xl border border-white/5">
+                            <span class="font-semibold"><?= htmlspecialchars($item) ?></span>
+                            <span class="text-slate-300"><?= number_format($avg, 2) ?></span>
+                        </li>
+                    <?php endforeach; ?>
+                </ol>
+            </div>
 
-    <div class="ranking">
-        <strong>Equipment with all quarterly inventory ≥ 100:</strong>
-        <?= renderAboveThresholdTable($sortedInventory, 100); ?>
+            <div class="bg-white/5 border border-white/10 rounded-3xl p-6 shadow-xl shadow-sky/10">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <p class="text-slate-400 text-sm">Reliability Check</p>
+                        <h3 class="text-xl font-semibold text-white">Stock ≥ 100 Every Quarter</h3>
+                    </div>
+                    <span class="text-xs px-3 py-1 rounded-full bg-mint/10 text-mint border border-mint/30">Consistent</span>
+                </div>
+                <div class="text-slate-200">
+                    <?= renderAboveThresholdTable($sortedInventory, 100); ?>
+                </div>
+            </div>
+        </section>
     </div>
 </body>
 </html>
