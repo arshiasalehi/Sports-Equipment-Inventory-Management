@@ -1,0 +1,14 @@
+{
+  "sqltools.connections": [
+    {
+      "name": "sport",
+      "driver": "MySQL",
+      "server": "localhost",
+      "port": 3306,
+      "database": "sport",
+      "username": "root",
+      "password": "",
+      "previewLimit": 50
+    }
+  ]
+}
